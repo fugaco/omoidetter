@@ -1,8 +1,31 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import { messaging } from "./firebase";
 
-function App() {
+const App: React.FC = () => {
+  Notification.requestPermission().then(p => {
+    console.info(p)
+
+    if (p === 'granted') {
+      messaging
+          .getToken()
+          .then(t => console.info(t))
+          .catch(err => console.error(err))
+    }
+  })
+
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker
+        .register("./firebase-messaging-sw.js")
+        .then(function(registration: any) {
+          console.log("Registration successful, scope is:", registration.scope);
+        })
+        .catch(function(err: any) {
+          console.log("Service worker registration failed, error:", err);
+        });
+  }
+
   return (
     <div className="App">
       <header className="App-header">
